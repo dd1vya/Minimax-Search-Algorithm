@@ -112,5 +112,71 @@ end
 ![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/a2acb6a1-ed8e-42e5-8968-fe805e4b0255)
 
 <hr>
+### PROGRAM
+
+```
+import time
+
+B = [['.'] * 3 for _ in range(3)]
+pb = lambda: [print('| '.join(r)) for r in B] or print()
+
+def winner():
+    lines = B + list(zip(*B)) + [[B[i][i] for i in range(3)], [B[i][2-i] for i in range(3)]]
+    for l in lines:
+        if l[0] != '.' and len(set(l)) == 1: return l[0]
+
+def full(): return all(B[r][c] != '.' for r in range(3) for c in range(3))
+
+def minimax(maxing, alpha=-2, beta=2):
+    w = winner()
+    if w: return 1 if w == 'X' else -1
+    if full(): return 0
+    for r in range(3):
+        for c in range(3):
+            if B[r][c] == '.':
+                B[r][c] = 'X' if maxing else 'O'
+                score = minimax(not maxing, alpha, beta)
+                B[r][c] = '.'
+                if maxing: alpha = max(alpha, score)
+                else:      beta  = min(beta,  score)
+                if alpha >= beta: return alpha if maxing else beta
+    return alpha if maxing else beta
+
+def best_move(maxing):
+    best, move = (-2 if maxing else 2), None
+    for r in range(3):
+        for c in range(3):
+            if B[r][c] == '.':
+                B[r][c] = 'X' if maxing else 'O'
+                score = minimax(not maxing)
+                B[r][c] = '.'
+                if (maxing and score > best) or (not maxing and score < best):
+                    best, move = score, (r, c)
+    return move
+
+def play():
+    pb()
+    while True:
+        start = time.time()
+        r, c = best_move(True)
+        print(f"Evaluation time: {time.time()-start:.7f}s\nRecommended move: X = {r}, Y = {c}")
+        r, c = int(input("Insert the X coordinate: ")), int(input("Insert the Y coordinate: "))
+        B[r][c] = 'X'; pb()
+        if winner() == 'X': print("X wins!"); break
+        if full(): print("It's a tie!"); break
+
+        r, c = best_move(False)
+        print(f"O plays: X = {r}, Y = {c}")
+        B[r][c] = 'O'; pb()
+        if winner() == 'O': print("O wins!"); break
+        if full(): print("It's a tie!"); break
+
+play()
+```
+### OUTPUT
+<img width="426" height="809" alt="image" src="https://github.com/user-attachments/assets/2229d97f-b526-4ff1-9fb3-68c03d690a98" />
+
+<img width="462" height="575" alt="image" src="https://github.com/user-attachments/assets/6058745d-16e3-4d25-b807-66d751286064" />
+
 <h2>Result:</h2>
 <p>Thus,Implementation of  Minimax Search Algorithm for a Simple TIC-TAC-TOE game wasa done successfully.</p>
